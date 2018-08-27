@@ -31,7 +31,6 @@ def turtle_settings(one, two, three):  # takes turtles and sets them up for use
         function_turtle.hideturtle()
     one.penup()
     one.goto(0, -320)
-    x, y = one.xcor(), one.ycor()
     one.pendown()
     one.circle(20)
     one.penup()
@@ -41,25 +40,21 @@ def turtle_settings(one, two, three):  # takes turtles and sets them up for use
     one.pencolor(turtle_1_color)
     one.shape("triangle")
     one.shapesize(2, 2, 2)
-    return x, y
+    return one.xcor(), one.ycor()
 
 
 def get_mouse_coordinates(x, y):  # receives the x and y coordinates of a click
-    mouse_x = x
-    mouse_y = y
-    print(mouse_x)
-    print(mouse_y)
-    if math.sqrt((0 - mouse_x) ** 2 + (-320 - mouse_y) ** 2) < 20:
-        print("reeee")
-        return True
+    print(x)
+    print(y)
+    if math.sqrt((x - 0) ** 2 + (y - -300) ** 2) <= 20:
+        print("test")
+        return False
+
+# def use_pen():
+#     if isdown():
 
 
-# def show_clicks():
-#     print(clicks)
-#     print(len(clicks))
-#     print(clicks[0])
-#     print(clicks[1])
-#     clicks.clear()
+
 
 
 turtle_1 = turtle.Turtle()
@@ -70,18 +65,14 @@ secret_x, secret_y = turtle_settings(turtle_1, turtle_2, turtle_3)
 turtle_1.ondrag(turtle_1.goto)
 
 
+# if draw_preset:
+#     for i in range(1, 100):
+#         turtle_2.circle(200 - 2 * i)  # draws some special designs
+#     for i in range(1, 100):
+#         turtle_3.circle(400 - 2 * i)
 
-if screen.onclick(get_mouse_coordinates):
-    for i in range(1, 100):
-        turtle_2.circle(200 - 2 * i)
-    for i in range(1, 100):
-        turtle_3.circle(400 - 2 * i)
-
-# screen.onkey(show_clicks, "a")
+# screen.onkey(use_pen, "space")
 screen.onclick(get_mouse_coordinates)
 screen.listen()
 screen.update()
 screen.mainloop()
-
-
-# test
