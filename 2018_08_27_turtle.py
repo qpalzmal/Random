@@ -19,69 +19,75 @@ draw_preset = False
 #     draw_preset = False
 
 
-def turtle_settings(one, two, three):  # takes turtles and sets them up for use
-    function_list = [one, two, three]
-    for i in range(1, 3):
-        function_turtle = function_list[i]
-        function_turtle.penup()
-        function_turtle.goto(0, -300)
-        function_turtle.pendown()
-        function_turtle.speed(0)
-        function_turtle.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
-        function_turtle.hideturtle()
-    one.penup()
-    one.goto(0, -320)
-    x, y = one.xcor(), one.ycor()
-    one.pendown()
-    one.circle(20)
-    one.penup()
-    one.goto(0, 0)
-    one.pendown()
-    one.speed(0)
-    one.pencolor(turtle_1_color)
-    one.shape("triangle")
-    one.shapesize(2, 2, 2)
-    return x, y
+def turtle_settings(trt_one, trt_two):  # takes turtles and sets them up for use
+    trt_two.penup()
+    trt_two.goto(0, -320)
+    trt_two.pendown()
+    trt_two.circle(20)
+    trt_two.penup()
+    trt_two.goto(0, -300)
+    trt_two.pendown()
+    trt_two.speed(0)
+    trt_two.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+    trt_two.hideturtle()
+
+    trt_one.penup()
+    trt_one.goto(0, 0)
+    trt_one.pendown()
+    trt_one.speed(0)
+    trt_one.pencolor(turtle_1_color)
+    trt_one.shape("triangle")
+    trt_one.shapesize(1, 1, 1)
+    return trt_one.xcor(), trt_one.ycor()
 
 
 def get_mouse_coordinates(x, y):  # receives the x and y coordinates of a click
-    mouse_x = x
-    mouse_y = y
-    print(mouse_x)
-    print(mouse_y)
-    if math.sqrt((0 - mouse_x) ** 2 + (-320 - mouse_y) ** 2) < 20:
-        print("reeee")
-        return True
+    print(x)
+    print(y)
+    if math.sqrt((x - 0) ** 2 + (y - -300) ** 2) <= 20:
+        print("test")
+        return False
 
 
-# def show_clicks():
-#     print(clicks)
-#     print(len(clicks))
-#     print(clicks[0])
-#     print(clicks[1])
-#     clicks.clear()
+def use_pen():
+    if turtle_1.isdown():
+        turtle_1.penup()
+    else:
+        turtle_1.pendown()
+
+
+def clear_pen():
+    turtle_1.clear()
+
+
+def change_color():
+    trt_one_color = screen.textinput("Color", "Enter the color you want to draw with")
+    turtle_1.pencolor(trt_one_color)
+
+
+def random_color():
+    turtle_1.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
 
 
 turtle_1 = turtle.Turtle()
 turtle_2 = turtle.Turtle()
-turtle_3 = turtle.Turtle()
 
-secret_x, secret_y = turtle_settings(turtle_1, turtle_2, turtle_3)
+secret_x, secret_y = turtle_settings(turtle_1, turtle_2)
 turtle_1.ondrag(turtle_1.goto)
 
 
-
-if screen.onclick(get_mouse_coordinates):
+if draw_preset:
     for i in range(1, 100):
-        turtle_2.circle(200 - 2 * i)
+        turtle_2.circle(200 - 2 * i)  # draws some special designs
+    turtle_2.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
     for i in range(1, 100):
-        turtle_3.circle(400 - 2 * i)
+        turtle_2.circle(400 - 2 * i)
 
-# screen.onkey(show_clicks, "a")
+screen.onkey(use_pen, "space")
+screen.onkey(clear_pen, "z")
+screen.onkey(change_color, "x")
+screen.onkey(random_color, "c")
 screen.onclick(get_mouse_coordinates)
 screen.listen()
 screen.update()
 screen.mainloop()
-
-
-# test
