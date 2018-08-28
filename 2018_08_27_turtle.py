@@ -19,16 +19,13 @@ draw_preset = False
 #     draw_preset = False
 
 
-def turtle_settings(one, two, three):  # takes turtles and sets them up for use
-    function_list = [one, two, three]
-    for i in range(1, 3):
-        function_turtle = function_list[i]
-        function_turtle.penup()
-        function_turtle.goto(0, -300)
-        function_turtle.pendown()
-        function_turtle.speed(0)
-        function_turtle.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
-        function_turtle.hideturtle()
+def turtle_settings(one, two):  # takes turtles and sets them up for use
+    trt_two.penup()
+    trt_two.goto(0, -300)
+    trt_two.pendown()
+    trt_two.speed(0)
+    trt_two.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+    trt_two.hideturtle()
     one.penup()
     one.goto(0, -320)
     one.pendown()
