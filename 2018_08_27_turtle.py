@@ -8,10 +8,10 @@ screen.colormode(255)
 screen.tracer(2)
 
 turtle_1_color = screen.textinput("Color", "Enter the color you want to draw with")  # asks user for pen color
-draw_preset = True
+draw_preset = False
 
 
-# draw_preset = screen.textinput("Draw Preset Design",
+# draw_preset = screen.textinput("Draw Preset Design",  # draws special design if "Y" or "y" is entered
 #                                "Enter (Y) if you want to draw some preset designs or (N) if you don't want to: ")
 # if str(draw_preset) == "Y" or str(draw_preset) == "y":
 #     draw_preset = True
@@ -38,36 +38,41 @@ def turtle_settings(trt_one, trt_two, trt_three):  # takes turtles and sets them
     trt_one.pendown()  # user controlled drawing tool
     trt_one.speed(0)
     trt_one.pencolor(turtle_1_color)
-    trt_one.shape("triangle")
-    trt_one.shapesize(.5, .5, .5)
+    trt_one.shape("arrow")
+    trt_one.resizemode("triangle")
+    trt_one.shapesize(.25, .25, .25)
     return 0, -300
 
 
-def get_mouse_coordinates(x, y):  # receives the x and y coordinates of a click
+def mouse_coordinates(x, y):  # receives the x and y coordinates of a click
+    turtle_1.penup()
+    turtle_1.goto(x, y)
+    turtle_1.pendown()
     print(x)
     print(y)
     if math.sqrt((x - 0) ** 2 + (y - -300) ** 2) <= 20:
-        return 6
+        return x, y, True, True
 
 
-def use_pen():
+def use_pen():  # "space" key makes the user controlled turtle switch between drawing or not
     if turtle_1.isdown():
         turtle_1.penup()
     else:
         turtle_1.pendown()
 
 
-def clear_pen():
+def clear_pen():  # "z" key clears all drawing except circle at bottom
     turtle_1.clear()
     if draw_preset:
         turtle_2.clear()
 
 
-def random_color():
+def random_color():  # "x" key change turtle to a random color
     turtle_1.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+    print(coor_x)
 
 
-def change_color():
+def change_color():  # "c" key asks user to enter color to change turtle to
     trt_1_color = screen.textinput("Color", "Enter the color you want to draw with")
     turtle_1.pencolor(trt_1_color)
 
@@ -91,8 +96,8 @@ screen.onkey(use_pen, "space")  # different keys that help draw
 screen.onkey(clear_pen, "z")
 screen.onkey(random_color, "x")
 screen.onkey(change_color, "c")
-ree = screen.onclick(get_mouse_coordinates)
+screen.onclick(mouse_coordinates)
+
 screen.listen()
 screen.update()
 screen.mainloop()
-
