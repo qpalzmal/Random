@@ -7,8 +7,9 @@ screen.setup(1366, 768)
 screen.colormode(255)
 screen.tracer(2)
 
+username = screen.textinput("Name:", "Enter you name:")  # asks user for name
 turtle_1_color = screen.textinput("Color", "Enter the color you want to draw with")  # asks user for pen color
-draw_preset = False
+draw_preset = True
 
 
 # draw_preset = screen.textinput("Draw Preset Design",  # draws special design if "Y" or "y" is entered
@@ -51,7 +52,7 @@ def mouse_coordinates(x, y):  # receives the x and y coordinates of a click
     print(x)
     print(y)
     if math.sqrt((x - 0) ** 2 + (y - -300) ** 2) <= 20:
-        return x, y, True, True
+        return
 
 
 def use_pen():  # "space" key makes the user controlled turtle switch between drawing or not
@@ -69,7 +70,6 @@ def clear_pen():  # "z" key clears all drawing except circle at bottom
 
 def random_color():  # "x" key change turtle to a random color
     turtle_1.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
-    print(coor_x)
 
 
 def change_color():  # "c" key asks user to enter color to change turtle to
@@ -86,11 +86,22 @@ turtle_1.ondrag(turtle_1.goto)
 
 
 if draw_preset:  # draws some special designs
+    change_color_count = 0
+    old_change_color_count = 0
     for i in range(1, 101):
         turtle_2.circle(200 - 2 * i)
-    turtle_2.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+        if change_color_count - old_change_color_count >= 5:
+            old_change_color_count = change_color_count
+            turtle_2.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+        change_color_count += 1
     for i in range(1, 101):
         turtle_2.circle(400 - 2 * i)
+        if change_color_count - old_change_color_count >= 5:
+            old_change_color_count = change_color_count
+            turtle_2.pencolor(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
+        change_color_count += 1
+    turtle_2.goto(0, -359)
+    turtle_2.write(str(username), move=False, align="center", font=("Verdana", 25, "normal"))
 
 screen.onkey(use_pen, "space")  # different keys that help draw
 screen.onkey(clear_pen, "z")
