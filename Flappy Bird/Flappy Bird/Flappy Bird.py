@@ -160,8 +160,8 @@ class Player(pygame.sprite.Sprite):
         self.jump_accel_down = 2
         self.last_jump = pygame.time.get_ticks()
         self.last_update = pygame.time.get_ticks()
-        self.jumping = False
-        self.max_jump = False
+        self.is_jumping = False
+        self.is_max_jump = False
 
         self.lives = 2
 
@@ -191,27 +191,32 @@ class Player(pygame.sprite.Sprite):
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_SPACE] or keystate[pygame.K_UP] and have_jump and player.lives > 0:
             self.vel_y = self.MAX_VEL_Y
-            self.jumping = True
+            self.is_jumping = True
             self.last_jump = pygame.time.get_ticks()
 
-        if self.jumping:
-            if self.max_jump is False:
+        if self.is_jumping:
+            if self.is_max_jump is False:
 
                 # makes player jump up till it reaches a jump limit
                 self.current_jump += self.jump_accel_up
-                if self.current_jump < self.jump_max:
-                    self.current_jump = self.jump_max
-                    self.max_jump = True
-            elif self.max_jump:
+                if self.current_jump < self.JUMP_MAX:
+                    self.current_jump = self.JUMP_MAX
+                    self.is_max_jump = True
+
+            # makes the smooth fall/"jump" down after reaching the max jump
+            elif self.is_max_jump:
                 self.current_jump += self.jump_accel_down
+
+        # makes it so fall/"jump" down won't keep affecting player
         if self.current_jump > 0:
             self.current_jump = 0
-            self.jumping = False
-            self.max_jump = False
+            self.is_jumping = False
+            self.is_max_jump = False
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if self.current_jump < 0 or self.vel_y < self.max_vel_y - 6 and ready:  # checks if jumping
+        # checks to see if player is jumping
+        if self.current_jump < 0 or self.vel_y < self.MAX_VEL_Y - 6 and ready:
             if now - self.last_update > 50:
                 self.index += 1
                 if self.index >= len(animation["rot_bird"]):  # jump animations
