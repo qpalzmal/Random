@@ -2,81 +2,99 @@ import pygame
 import random
 from os import path
 
-width = 1000
-height = 500
-fps = 60
+WIDTH = 1000
+HEIGHT = 500
+FPS = 60
 
-white = (255, 255, 255)
-black = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
+# marks the directory for the image and sounds folders
 img_dir = path.join(path.dirname(__file__), "Images\\")
 snd_dir = path.join(path.dirname(__file__), "Sound\\")
+
+# opens and uses the score file containing high scores
 score_read = open("Score.txt", "r")
 score_append = open("Score.txt", "a")
+
 font_name = pygame.font.match_font("verdana")
 
+# sets up the game
 pygame.init()
 pygame.mixer.init()
 
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Flappy Bird")
 clock = pygame.time.Clock()
 
+# imports lives image
 lives_img = pygame.image.load(path.join(img_dir, "bird.png")).convert()
 lives_img = pygame.transform.scale(lives_img, (40, 40))
-lives_img.set_colorkey(black)
+lives_img.set_colorkey(BLACK)
 
+# imports background image
 background = pygame.image.load(path.join(img_dir, "background.png")).convert()
-background = pygame.transform.scale(background, (width, height))
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
+# imports water image
 water_img = pygame.image.load(path.join(img_dir, "water.png")).convert()
-water_img.set_colorkey(black)
+water_img.set_colorkey(BLACK)
 
+# imports all sounds to be used
 game_music = pygame.mixer.music.load(path.join(snd_dir, "flappybirds music.mp3"))
 pickup = pygame.mixer.Sound(path.join(snd_dir, "pickup.wav"))
 crash = pygame.mixer.Sound(path.join(snd_dir, "crash.ogg"))
 splash = pygame.mixer.Sound(path.join(snd_dir, "splash.wav"))
 
-x_scale = 50  # values for coin scale
-x_scale_change = -13
-
+# different lists that contain series of images for animation
 animation = {}
 animation["coin"] = []
 animation["bird"] = []
 animation["rot_bird"] = []
 animation["volume"] = []
 
-# recei
+# used to help correctly resize coins
+x_scale = 50
+x_scale_change = -13
+
+# loop used for importing the coin image
 for i in range(6):
     filename = "coin{}.png".format(i)
-    image = pygame.image.load(path.join(img_dir, filename)).convert()  # coin img list
-    image.set_colorkey(black)
+    image = pygame.image.load(path.join(img_dir, filename)).convert()
+    image.set_colorkey(BLACK)
     image = pygame.transform.scale(image, (x_scale, 50))
     x_scale += x_scale_change
     if x_scale == 11:
         x_scale_change = 13
     animation["coin"].append(image)
+
+# loop used for importing player image
 for i in range(4):
     filename = "bird{}.png".format(i)
     image = pygame.image.load(path.join(img_dir, filename)).convert()  # bird img list
-    image.set_colorkey(black)
+    image.set_colorkey(BLACK)
     image = pygame.transform.scale(image, (50, 40))
     animation["bird"].append(image)
+
+# loop used for importing jumping player image
 for i in range(4):
     filename = "bird{}.png".format(i)
     image = pygame.image.load(path.join(img_dir, filename)).convert()  # bird jumping img list
-    image.set_colorkey(black)
+    image.set_colorkey(BLACK)
     image = pygame.transform.scale(image, (50, 40))
     image = pygame.transform.rotate(image, 22.5)
     animation["rot_bird"].append(image)
+
+# loop used for importing volume image
 for i in range(4):
     filename = "vol{}.png".format(i)
     image = pygame.image.load(path.join(img_dir, filename)).convert()  # volume img list
     image = pygame.transform.scale(image, (100, 50))
-    image.set_colorkey(black)
+    image.set_colorkey(BLACK)
     animation["volume"].append(image)
 
 
+# draws any text at specified point
 def draw_text(surf, text, color, size, x, y):
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, color)
@@ -85,6 +103,7 @@ def draw_text(surf, text, color, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
+# assigns keybinds to control volume levels
 def volume():
     old_volume = pygame.mixer.music.get_volume()
     if event.key == pygame.K_PERIOD:
@@ -99,6 +118,7 @@ def volume():
         pygame.mixer.music.set_volume(new_volume)
 
 
+# draws a series of the image
 def draw_multi(surf, x, y, lives, img, type):
     for i in range(lives):
         img_rect = img.get_rect()
@@ -110,6 +130,7 @@ def draw_multi(surf, x, y, lives, img, type):
         surf.blit(img, img_rect)
 
 
+# spawns all the pipe sprites needed
 def spawn():
     pipe = Bottom_Pipe()
     pipe.spawn()
@@ -124,19 +145,24 @@ class Player(pygame.sprite.Sprite):
         self.image = animation["bird"][self.index]
         self.rect = self.image.get_rect()
         self.radius = 2
-        self.rect.centerx = width / 4
-        self.rect.bottom = height / 2
-        self.accel_y = .2
+        self.rect.centerx = WIDTH / 4
+        self.rect.bottom = HEIGHT / 2
+
+        # sets up motion numbers
         self.vel_y = 0
-        self.max_vel_y = 7.5
+        self.MAX_VEL_Y = 7.5
+        self.accel_y = .2
+
+        # sets up jumping numbers
         self.current_jump = 0
-        self.jump_accel_down = 2
+        self.JUMP_MAX = -11
         self.jump_accel_up = -2
-        self.jump_max = -11
+        self.jump_accel_down = 2
         self.last_jump = pygame.time.get_ticks()
         self.last_update = pygame.time.get_ticks()
         self.jumping = False
         self.max_jump = False
+
         self.lives = 2
 
     def update(self):
@@ -144,28 +170,34 @@ class Player(pygame.sprite.Sprite):
         self.jump()
         # print(self.jumping)
         if ready:
+            # constant movement in y direction with respect to acceleration
             self.vel_y += self.accel_y
-            if self.vel_y > self.max_vel_y:
-                self.vel_y = self.max_vel_y
+            if self.vel_y > self.MAX_VEL_Y:
+                self.vel_y = self.MAX_VEL_Y
             self.rect.y += self.vel_y + self.current_jump
             if self.rect.top < 0:
                 self.rect.top = 0
-            if self.rect.bottom > height and self.lives > 0:
-                self.rect.bottom = height
+            if self.rect.bottom > HEIGHT and self.lives > 0:
+                self.rect.bottom = HEIGHT
             # print(self.vel_y)
 
     def jump(self):
-        if now - self.last_jump > 100:  # puts a delay for the jump
+        # puts a delay for the jump
+        if now - self.last_jump > 100:
             have_jump = True
         else:
             have_jump = False
+
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_SPACE] or keystate[pygame.K_UP] and have_jump and player.lives > 0:
-            self.vel_y = 0
+            self.vel_y = self.MAX_VEL_Y
             self.jumping = True
             self.last_jump = pygame.time.get_ticks()
+
         if self.jumping:
             if self.max_jump is False:
+
+                # makes player jump up till it reaches a jump limit
                 self.current_jump += self.jump_accel_up
                 if self.current_jump < self.jump_max:
                     self.current_jump = self.jump_max
