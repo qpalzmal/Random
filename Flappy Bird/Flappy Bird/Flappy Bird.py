@@ -45,6 +45,8 @@ animation["coin"] = []
 animation["bird"] = []
 animation["rot_bird"] = []
 animation["volume"] = []
+
+# recei
 for i in range(6):
     filename = "coin{}.png".format(i)
     image = pygame.image.load(path.join(img_dir, filename)).convert()  # coin img list
@@ -295,8 +297,10 @@ score = 0
 future_score = score + 5  # scoring system
 high_score = int(score_read.readline())
 for line in score_read:
-    if int(line) >= int(high_score):
+    if int(line) > int(high_score):
         high_score = line
+
+coin_spree = 0
 
 pygame.mixer.music.play(-1)
 game_volume = pygame.mixer.music.set_volume(1)
@@ -355,6 +359,7 @@ while running:
     hits = pygame.sprite.spritecollide(player, pipes, True)
     for hit in hits:
         player.lives -= 1
+        coin_spree = 0
         if player.lives <= 0 and int(high_score) < score:
             high_score = score
         crash.play()
@@ -363,8 +368,12 @@ while running:
     hits = pygame.sprite.spritecollide(player, coins, True)
     for hit in hits:
         if player.lives > 0:
-            score += 100000
-        pickup.play()
+            score += 1
+            coin_spree += 1
+            pickup.play()
+            if coin_spree >= 5:
+                player.lives += 1
+                coin_spree = 0
         if score >= future_score:
             player.lives += 1
             future_score = score + 5
