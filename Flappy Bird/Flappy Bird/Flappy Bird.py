@@ -14,7 +14,7 @@ img_dir = path.join(path.dirname(__file__), "Images\\")
 snd_dir = path.join(path.dirname(__file__), "Sound\\")
 
 # opens and uses the score file containing high scores
-score_read = open("Score.txt", "r")
+score_read = open("High Score.txt", "r")
 
 font_name = pygame.font.match_font("verdana")
 
@@ -98,15 +98,17 @@ def draw_text(surf, text, color, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
-# assigns keybinds to control volume levels
+# changes volume depending on what key was pressed
 def volume():
     old_volume = pygame.mixer.music.get_volume()
-    if event.key == pygame.K_PERIOD:
+    # increases volume if "." or "F3" was pressed
+    if event.key == pygame.K_PERIOD or event.key == pygame.K_F3:
         new_volume = old_volume + .1
         if new_volume >= 1:
             new_volume = 1
         pygame.mixer.music.set_volume(new_volume)
-    if event.key == pygame.K_COMMA:
+    # decreases volume if "," or "F2" was pressed
+    if event.key == pygame.K_COMMA or event.key == pygame.K_F2:
         new_volume = old_volume - .1
         if new_volume <= 0:
             new_volume = 0
@@ -118,7 +120,7 @@ def draw_lives(surf, x, y, lives, img):
     for life in range(lives):
         img_rect = img.get_rect()
         if type == "lives":
-            img_rect.x = x + 40 * i
+            img_rect.x = x + 40 * life
         img_rect.y = y
         surf.blit(img, img_rect)
 
@@ -174,6 +176,7 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         # puts a delay for the jump
+        now = pygame.time.get_ticks()
         if now - self.last_jump > 100:
             have_jump = True
         else:
@@ -181,14 +184,15 @@ class Player(pygame.sprite.Sprite):
 
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_SPACE] or keystate[pygame.K_UP] and have_jump and player.lives > 0:
-            self.vel_y = self.MAX_VEL_Y
+            self.vel_y = 0
             self.is_jumping = True
             self.last_jump = pygame.time.get_ticks()
 
         if self.is_jumping:
+            # makes player jump up till it reaches a jump limit
             if self.is_max_jump is False:
-                # makes player jump up till it reaches a jump limit
                 self.current_jump += self.jump_accel_up
+                # once it reaches the max jump height
                 if self.current_jump < self.JUMP_MAX:
                     self.current_jump = self.JUMP_MAX
                     self.is_max_jump = True
@@ -336,6 +340,7 @@ score_read.close()
 pygame.mixer.music.play(-1)
 game_volume = pygame.mixer.music.set_volume(1)
 
+# booleans used for game start, showing instructions, and client running
 ready = False
 instructions = False
 running = True
@@ -348,14 +353,13 @@ while running:
             if event.key == pygame.K_RETURN:
                 ready = True
                 instructions = False
-            if event.key == pygame.K_BACKSPACE and ready is False:
-                instructions = True
-            if event.key == pygame.K_COMMA or event.key == pygame.K_PERIOD:
+            if event.key == pygame.K_COMMA or event.key == pygame.K_F2 or pygame.K_PERIOD or pygame.K_F3:
                 volume()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_BACKSPACE:
-                instructions = False
+                instructions = not instructions
 
+    all_sprites.update()
     current_volume = pygame.mixer.music.get_volume()
     # print(pygame.mixer.music.get_volume())
 
@@ -385,12 +389,11 @@ while running:
                 spawn()
         last_pipe = now
 
-    all_sprites.update()
-
     # player pipe collision
     hits = pygame.sprite.spritecollide(player, pipes, True)
     for hit in hits:
         player.lives -= 1
+        print(player.lives)
         coin_spree = 0
         # once it's game over, if score > high score, high score will be replaced and written into the high score file
         if player.lives <= 0 and int(high_score) < score:
@@ -431,6 +434,15 @@ while running:
     screen.blit(background, (0, 0))
     all_sprites.draw(screen)
 
+    # black start screen
+    if instructions or (instructions is False and ready is False):
+        screen.blit(start_screen, (0, 0))
+    # writes the text for player score, high score, and the lives once game starts
+    else:
+        draw_text(screen, str(score), WHITE, 25, WIDTH / 2, HEIGHT / 4)
+        draw_text(screen, ("High Score: " + str(high_score)), WHITE, 25, WIDTH / 2, 62.5)
+        draw_lives(screen, 0, 5, player.lives, lives_img)
+
     # draws image for volume based on value
     if current_volume > .666:
         screen.blit(animation["volume"][0], (-10, 62.5))
@@ -441,23 +453,16 @@ while running:
     else:
         screen.blit(animation["volume"][3], (-10, 62.5))
 
-    # writes the text for player score, high score, and the lives
-    if instructions or (instructions is False and ready is False):
-        screen.blit(start_screen, (0, 0))
-    draw_text(screen, str(score), WHITE, 25, WIDTH / 2, HEIGHT / 4)
-    draw_text(screen, ("High Score: " + str(high_score)), WHITE, 25, WIDTH / 2, 62.5)
-    draw_lives(screen, 0, 5, player.lives, lives_img)
-
     # text for instructions on how to play
     if instructions:
         draw_text(screen, '''Collect all the coins and avoid the pipes''',
-                  WHITE, 25, WIDTH / 2, HEIGHT / 2 - 30)
+                  WHITE, 20, WIDTH / 2, HEIGHT / 2 - 60)
         draw_text(screen, '''5 coins = extra life and 5 coins in a row without getting hit gives an extra life''',
-                  WHITE, 25, WIDTH / 2, HEIGHT / 2)
-        draw_text(screen, '''"Space" or "Up Arrow" to jump''', WHITE, 25, WIDTH / 2, HEIGHT / 2 + 30)
+                  WHITE, 20, WIDTH / 2, HEIGHT / 2 - 30)
+        draw_text(screen, '''"Space" or "Up Arrow" to jump''', WHITE, 25, WIDTH / 2, HEIGHT / 2)
         draw_text(screen, '''"," to decrease volume, "." to increase volume''',
-                  WHITE, 25, WIDTH / 2, HEIGHT / 2 + 60)
-        draw_text(screen, '''"Enter" to start''', WHITE, 25, WIDTH / 2, HEIGHT / 2 + 90)
+                  WHITE, 20, WIDTH / 2, HEIGHT / 2 + 30)
+        draw_text(screen, '''"Enter" to start''', WHITE, 20, WIDTH / 2, HEIGHT / 2 + 60)
 
     # default start screen
     if ready is False and instructions is False:
