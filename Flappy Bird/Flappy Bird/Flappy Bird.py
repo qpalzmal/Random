@@ -15,43 +15,6 @@ snd_dir = path.join(path.dirname(__file__), "Sound\\")
 
 # opens and uses the score file containing high scores
 score_read = open("Score.txt", "r")
-score_append = open("Score.txt", "a")
-
-font_name = pygame.font.match_font("verdana")
-
-# sets up the game
-pygame.init()
-pygame.mixer.init()
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Flappy Bird")
-clock = pygame.time.Clock()
-
-# imports lives image
-lives_img = pygame.image.load(path.join(img_dir, "bird.png")).convert()
-lives_img = pygame.transform.scale(lives_img, (40, 40))
-lives_img.set_colorkey(BLACK)
-
-# imports background image
-background = pygame.image.load(path.join(img_dir, "background.png")).convert()
-background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-import pygame
-import random
-from os import path
-
-WIDTH = 1000
-HEIGHT = 500
-FPS = 60
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-
-# marks the directory for the image and sounds folders
-img_dir = path.join(path.dirname(__file__), "Images\\")
-snd_dir = path.join(path.dirname(__file__), "Sound\\")
-
-# opens and uses the score file containing high scores
-score_read = open("Score.txt", "r")
 
 font_name = pygame.font.match_font("verdana")
 
@@ -151,8 +114,8 @@ def volume():
 
 
 # draws a series of the image
-def draw_multi(surf, x, y, lives, img):
-    for i in range(lives):
+def draw_lives(surf, x, y, lives, img):
+    for life in range(lives):
         img_rect = img.get_rect()
         if type == "lives":
             img_rect.x = x + 40 * i
@@ -483,7 +446,7 @@ while running:
         screen.blit(start_screen, (0, 0))
     draw_text(screen, str(score), WHITE, 25, WIDTH / 2, HEIGHT / 4)
     draw_text(screen, ("High Score: " + str(high_score)), WHITE, 25, WIDTH / 2, 62.5)
-    draw_multi(screen, 0, 5, player.lives, lives_img)
+    draw_lives(screen, 0, 5, player.lives, lives_img)
 
     # text for instructions on how to play
     if instructions:
