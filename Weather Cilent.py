@@ -1,26 +1,31 @@
-# import urllib
-# import pprint
-# import json
-# import time
+import requests
+import pprint
+import json
+import time
 
 
 def main():
 
     search_type = input("What do you want to use to search for weather('zip' or 'city'): ")
-    print(search_type)
-    search_type = search_type.lower
-    get_html(search_type)
+    api_key = "b42093d17fb4129561f860377096a44a"
+    get_html(search_type, api_key)
 
 
-def get_html(search_type):
-    if search_type == "city":
+def get_html(search_type, api_key):
+    if search_type.lower() == "city":
         city = input("Enter the city you want weather for: ")
-        url = "api.openweathermap.org/data/2.5/forecast/daily?q={}".format(city)
-        print(url)
-    elif search_type == "zip":
+        url = "http://api.openweathermap.org/data/2.5/forecast?q={}&mode=xml&appid={}".format(city, api_key)
+        # print(url)
+        response = requests.get(url)
+        # print(response.status_code)
+        print(response.json)
+    elif search_type.lower() == "zip":
         zip_code = input("Enter zip code you want weather for: ")
-        url = "api.openweathermap.org/data/2.5/forecast/daily?zip={}".format(zip_code)
-        print(url)
+        url = "http://api.openweathermap.org/data/2.5/forecast?zip={}&appid={}".format(zip_code, api_key)
+        # print(url)
+        response = requests.get(url)
+        # print(response.status_code)
+        print(response.json)
 
 
 if __name__ == "__main__":
