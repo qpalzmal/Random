@@ -11,16 +11,30 @@ def main():
     search_type = input("What do you want to use to search for weather('zip' or 'city'): ")
     url = get_html(search_type, api_key)
     data = get_data(url)
-    pprint.pprint(data)
-    # for list_index in range(0, 40):
-        pprint.pprint(data["list"][40][3])
+    # pprint.pprint(data)
+    # method used to reach the temperature
+    # pprint.pprint(data["list"][0]["main"]["temp"])
+
+    # gets a whole list of temperatures for use
+    temperature_list = []
+
+    for index_count in range(40):
+        # print(data["list"][index_count]["main"]["temp"])
+        #  gets the temperature
+        kelvin_temperature = data["list"][index_count]["main"]["temp"]
+        # converts the given temperature(kelvin) and converts to celsius
+        celsius_temperature = round(kelvin_temperature - 273, 2)
+        temperature_list.append(celsius_temperature)
+        index_count += 1
+
+    print(temperature_list)
 
 
+# goes to the url and sends back the data for use
 def get_data(url):
     response = urllib.request.Request(url)
     json_object = urllib.request.urlopen(response)
     json_data = json.load(json_object)
-    # pprint.pprint(json_data)
     return json_data
 
 
