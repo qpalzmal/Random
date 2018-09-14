@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 api_key = "b42093d17fb4129561f860377096a44a"
 temperature_list = []
+time_list = []
 
 
 def main():
@@ -14,20 +15,24 @@ def main():
     # asks user for units of measurement, unit will default to fahrenheit if no valid answer given
     units = input("Enter what units you want the temperature in: ")
     if units.lower() == "celsius" or units.lower() == "c":
+        print("Temperature units has been set to Celsius")
         units = "metric"
     elif units.lower() == "kelvin" or units.lower() == "k":
+        print("Temperature units has been set to Kelvin")
         units = "default"
     else:
+        print("Temperature units has been set to Fahrenheit")
         units = "imperial"
 
-    search = input('What do you want to use to search for weather("zip", "city"): ')
+    search = input("\n"'What do you want to use to search for weather("zip", "city"): ')
     url = get_html(search, units, api_key)
 
     data = get_data(url)
-
     # pprint.pprint(data)
-    # method used to reach the temperature
+
+    # method used to reach the temperature and time
     # pprint.pprint(data["list"][0]["main"]["temp"])
+    # pprint.pprint(data["list"][0]["dt_txt"]
 
     # receives all the temperatures and puts it into a list
     for index_count in range(40):
@@ -36,7 +41,17 @@ def main():
         temperature = data["list"][index_count]["main"]["temp"]
         temperature_list.append(temperature)
         index_count += 1
+
+    # receives all the time and puts it into a list
+    for index_count in range(40):
+        # print(data["list"][index_count]["main"]["temp"])
+        # gets the time
+        time = data["list"][index_count]["dt_txt"]
+        time_list.append(time)
+        index_count += 1
+
     pprint.pprint(temperature_list)
+    pprint.pprint(time_list)
 
 
 # goes to the url and sends back the data for use
