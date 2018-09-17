@@ -34,25 +34,30 @@ def main():
     # pprint.pprint(data["list"][0]["main"]["temp"])
     # pprint.pprint(data["list"][0]["dt_txt"]
 
-    # receives all the temperatures and puts it into a list
-    for index_count in range(40):
-        # print(data["list"][index_count]["main"]["temp"])
+    for index_count in range(len(data["list"])):
         # gets the temperature
         temperature = data["list"][index_count]["main"]["temp"]
         temperature_list.append(temperature)
-        index_count += 1
-
-    # receives all the times and puts it into a list
-    for index_count in range(40):
-        # print(data["list"][index_count]["main"]["temp"])
         # gets the time
         time = data["list"][index_count]["dt_txt"]
         time_list.append(time)
         index_count += 1
 
-    pprint.pprint(temperature_list)
-    pprint.pprint(time_list)
-    plt.plot(time_list, temperature_list)
+    # pprint.pprint(temperature_list)
+    # pprint.pprint(time_list)
+
+    test_time_list = []
+    every_ten = 0
+    for i in range(4):
+        test_time_list.append(time_list[every_ten])
+        every_ten += 10
+
+    pprint.pprint(test_time_list)
+
+    # pprint.pprint(temperature_list)
+    # pprint.pprint(time_list)
+    plt.plot(test_time_list, temperature_list)
+    # plt.tick_params("both")
     plt.show()
 
 
