@@ -13,7 +13,7 @@ time_list = []
 def main():
 
     # asks user for units of measurement, unit will default to fahrenheit if no valid answer given
-    units = input("Enter what units you want the temperature in: ")
+    units = input("Enter what units you want the temperature in(defaults to Fahrenheit(F) if there are any typos): ")
     if units.lower() == "celsius" or units.lower() == "c":
         print("Temperature units has been set to Celsius")
         units = "metric"
@@ -42,7 +42,7 @@ def main():
         temperature_list.append(temperature)
         index_count += 1
 
-    # receives all the time and puts it into a list
+    # receives all the times and puts it into a list
     for index_count in range(40):
         # print(data["list"][index_count]["main"]["temp"])
         # gets the time
@@ -52,6 +52,8 @@ def main():
 
     pprint.pprint(temperature_list)
     pprint.pprint(time_list)
+    plt.plot(time_list, temperature_list)
+    plt.show()
 
 
 # goes to the url and sends back the data for use
