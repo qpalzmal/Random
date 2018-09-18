@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 api_key = "b42093d17fb4129561f860377096a44a"
 temperature_list = []
+date_list = []
 time_list = []
 
 
@@ -28,7 +29,7 @@ def main():
     url = get_html(search, units, api_key)
 
     data = get_data(url)
-    # pprint.pprint(data)
+    pprint.pprint(data)
 
     # method used to reach the temperature and time
     # pprint.pprint(data["list"][0]["main"]["temp"])
@@ -39,25 +40,26 @@ def main():
         temperature = data["list"][index_count]["main"]["temp"]
         temperature_list.append(temperature)
         # gets the time
-        time = data["list"][index_count]["dt_txt"]
-        time_list.append(time)
+        date = data["list"][index_count]["dt_txt"]
+        date_list.append(date)
         index_count += 1
 
     # pprint.pprint(temperature_list)
+    # pprint.pprint(date_list)
+
+    # gets the time from the return date + time value
+    for i in date_list:
+        time_list.append(i[11:])
+
     # pprint.pprint(time_list)
+    test_list = []
+    for i in range(40):
+        temp = temperature_list[i]
+        time = time_list[i]
+        test_list.append(str(temp) + " = " + time)
 
-    test_time_list = []
-    every_ten = 0
-    for i in range(4):
-        test_time_list.append(time_list[every_ten])
-        every_ten += 10
-
-    pprint.pprint(test_time_list)
-
-    # pprint.pprint(temperature_list)
-    # pprint.pprint(time_list)
-    plt.plot(test_time_list, temperature_list)
-    # plt.tick_params("both")
+    pprint.pprint(test_list)
+    plt.scatter(time_list, temperature_list)
     plt.show()
 
 
