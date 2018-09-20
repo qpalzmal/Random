@@ -1,6 +1,6 @@
 '''
 This program scraps the web for data and uses it to graph the data for analysis by the user
-Section cut off with line of commented "-" is code from someone else modified to work here
+Section cut off with line of commented "*" is code from someone else modified to work here
 '''
 
 
@@ -61,9 +61,9 @@ def main():
     #     time_list.append(i[11:])
     # pprint.pprint(time_list)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # ***
     local_time_list = []
-    # METHOD 2: Auto-detect zones:
+    # Auto-detect zones
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
 
@@ -84,7 +84,7 @@ def main():
         local_time_list.append(local)
 
     # pprint.pprint(local_time_list)
-    # ------------------------------------------------------------------------------------------------------------------
+    # ***
 
     # (----NOT USED----)  DELETE LATER
     # shows temperature that is equal to the time
