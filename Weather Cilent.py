@@ -22,14 +22,17 @@ def main():
     if units.lower() == "celsius" or units.lower() == "c":
         print("Temperature units has been set to Celsius (°C)")
         units = "metric"
+        units_symbol = "°C"
     elif units.lower() == "kelvin" or units.lower() == "k":
         print("Temperature units has been set to Kelvin (K)")
         units = "default"
+        units_symbol = "K"
     else:
         print("Temperature units has been set to Fahrenheit (°F)")
         units = "imperial"
+        units_symbol = "°F"
 
-    search = input("\n"'What do you want to use to search for weather ("zip", "city"): ')
+    search = input('What do you want to use to search for weather ("zip", "city"): ')
     url = get_html(search, units, API_KEY)
 
     data = get_data(url)
@@ -61,7 +64,7 @@ def main():
     #     time_list.append(i[11:])
     # pprint.pprint(time_list)
 
-    # ***
+    # *****
     local_time_list = []
     # Auto-detect zones
     from_zone = tz.tzutc()
@@ -84,19 +87,20 @@ def main():
         local_time_list.append(local)
 
     # pprint.pprint(local_time_list)
-    # ***
+    # *****
 
-    # (----NOT USED----)  DELETE LATER
     # shows temperature that is equal to the time
     # temperature_time_list = []
     # for i in range(40):
     #     temp = temperature_list[i]
-    #     time = time_list[i]
-    #     temperature_time_list.append(str(temp) + " = " + time)
+    #     time = local_time_list[i]
+    #     temperature_time_list.append(str(temp) + " = " + str(time))
     # pprint.pprint(temperature_time_list)
 
     # plt.scatter(local_time_list, temperature_list)
-    plt.plot(local_time_list, temperature_list)
+    plt.plot(local_time_list, temperature_list, color="blue", linewidth=2.5, linestyle="-")
+    plt.xlabel("Date(Y-M-D)")
+    plt.ylabel("Temperature({})".format(units_symbol))
     plt.show()
 
 
