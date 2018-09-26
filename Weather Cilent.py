@@ -42,9 +42,10 @@ def main():
     # pprint.pprint(data["list"][0]["main"]["temp"])
     # pprint.pprint(data["list"][0]["dt_txt"]
 
-    # receives the temperature and date+time from the data
+    # receives the temperature/date time/wind speed from the data
     temperature_list = []
     datetime_list = []
+    wind_speed_list = []
     for index in range(len(data["list"])):
         # gets the temperature
         temperature = data["list"][index]["main"]["temp"]
@@ -52,10 +53,14 @@ def main():
         # gets the time
         date_time = data["list"][index]["dt_txt"]
         datetime_list.append(date_time)
+        # gets the wind speed
+        wind_speed = data["list"][index]["wind"]["speed"]
+        wind_speed_list.append(wind_speed)
         index += 1
 
     # pprint.pprint(temperature_list)
     # pprint.pprint(datetime_list)
+    # pprint.pprint(wind_speed_list)
 
     # (----NOT USED----)  DELETE LATER
     # gets the only the "time" from the return "date + time" value
@@ -97,10 +102,17 @@ def main():
     #     temperature_time_list.append(str(temp) + " = " + str(time))
     # pprint.pprint(temperature_time_list)
 
-    # plt.scatter(local_time_list, temperature_list)
+    # time/temp plot
+    plt.subplot(2, 1, 1)
     plt.plot(local_time_list, temperature_list, color="blue", linewidth=2.5, linestyle="-")
-    plt.xlabel("Date(Y-M-D)")
     plt.ylabel("Temperature({})".format(units_symbol))
+
+    # time/wind speed plot
+    plt.subplot(2, 1, 2)
+    plt.plot(local_time_list, wind_speed_list, color="green", linewidth=2.5, linestyle="-")
+    plt.xlabel("Date(Y-M-D)")
+    plt.ylabel("Wind Speed(m/s)")
+
     plt.show()
 
 
