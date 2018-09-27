@@ -9,7 +9,6 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import linregress
 from datetime import datetime
 from dateutil import tz
 
@@ -107,21 +106,6 @@ def main():
 
     dataframe = pd.DataFrame(weather_data)
     print(dataframe)
-
-    stats1 = linregress(dataframe["Time"], dataframe["Temperature"])
-    stats2 = linregress(dataframe["Time"], dataframe["Wind Speed"])
-
-    plt.subplot(2, 1, 1)
-    m1 = stats1.slope
-    b1 = stats1.intercept
-    plt.plot(dataframe["Time"], m1 * dataframe["Time"] + b1, color="red")
-
-    plt.subplot(2, 1, 2)
-    m2 = stats2.slope
-    b2 = stats2.intercept
-    plt.plot(dataframe["Time"], m2 * dataframe["Time"] + b2, color="red")
-
-
 
     # time/temp plot
     plt.subplot(2, 1, 1)
