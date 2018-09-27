@@ -1,13 +1,15 @@
 '''
 This program scraps the web for data and uses it to graph the data for analysis by the user
-Section cut off with line of commented "*" is code from someone else modified to work here
 '''
 
 
 import urllib.request
 import pprint
 import json
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import linregress
 from datetime import datetime
 from dateutil import tz
 
@@ -38,9 +40,10 @@ def main():
     data = get_data(url)
     # pprint.pprint(data)
 
-    # method used to reach the temperature and time
+    # method used to reach the temperature/date time/wind speed
     # pprint.pprint(data["list"][0]["main"]["temp"])
     # pprint.pprint(data["list"][0]["dt_txt"]
+    # pprint.pprint(data["list"][0]["wind"]["speed"])
 
     # receives the temperature/date time/wind speed from the data
     temperature_list = []
@@ -62,14 +65,6 @@ def main():
     # pprint.pprint(datetime_list)
     # pprint.pprint(wind_speed_list)
 
-    # (----NOT USED----)  DELETE LATER
-    # gets the only the "time" from the return "date + time" value
-    # time_list = []
-    # for i in datetime_list:
-    #     time_list.append(i[11:])
-    # pprint.pprint(time_list)
-
-    # *****
     local_time_list = []
     # Auto-detect zones
     from_zone = tz.tzutc()
@@ -92,7 +87,6 @@ def main():
         local_time_list.append(local)
 
     # pprint.pprint(local_time_list)
-    # *****
 
     # shows temperature that is equal to the time
     # temperature_time_list = []
@@ -102,14 +96,41 @@ def main():
     #     temperature_time_list.append(str(temp) + " = " + str(time))
     # pprint.pprint(temperature_time_list)
 
+    weather_data = {"Time": [],
+                    "Temperature": [],
+                    "Wind Speed": []}
+
+    for i in range(len(temperature_list)):
+        weather_data["Time"].append(local_time_list[i])
+        weather_data["Temperature"].append(temperature_list[i])
+        weather_data["Wind Speed"].append(wind_speed_list[i])
+
+    dataframe = pd.DataFrame(weather_data)
+    print(dataframe)
+
+    stats1 = linregress(dataframe["Time"], dataframe["Temperature"])
+    stats2 = linregress(dataframe["Time"], dataframe["Wind Speed"])
+
+    plt.subplot(2, 1, 1)
+    m1 = stats1.slope
+    b1 = stats1.intercept
+    plt.plot(dataframe["Time"], m1 * dataframe["Time"] + b1, color="red")
+
+    plt.subplot(2, 1, 2)
+    m2 = stats2.slope
+    b2 = stats2.intercept
+    plt.plot(dataframe["Time"], m2 * dataframe["Time"] + b2, color="red")
+
+
+
     # time/temp plot
     plt.subplot(2, 1, 1)
-    plt.plot(local_time_list, temperature_list, color="blue", linewidth=2.5, linestyle="-")
+    plt.plot(dataframe["Time"], dataframe["Temperature"], color="blue", linewidth=2.5, linestyle="-")
     plt.ylabel("Temperature({})".format(units_symbol))
 
     # time/wind speed plot
     plt.subplot(2, 1, 2)
-    plt.plot(local_time_list, wind_speed_list, color="green", linewidth=2.5, linestyle="-")
+    plt.plot(dataframe["Time"], dataframe["Wind Speed"], color="green", linewidth=2.5, linestyle="-")
     plt.xlabel("Date(Y-M-D)")
     plt.ylabel("Wind Speed(m/s)")
 
