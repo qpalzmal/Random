@@ -47,7 +47,8 @@ def main():
     # receives the temperature/date time/wind speed from the data
     weather_data = {"Time": [],
                     "Temperature": [],
-                    "Wind Speed": []}
+                    "Wind Speed": [],
+                    "Wind Direction": []}
     datetime_list = []
 
     for index in range(len(data["list"])):
@@ -57,6 +58,8 @@ def main():
         weather_data["Temperature"].append(data["list"][index]["main"]["temp"])
         # gets the wind speed
         weather_data["Wind Speed"].append(data["list"][index]["wind"]["speed"])
+        # gets the wind direction
+        weather_data["Wind Direction"].append(data["list"][index]["wind"]["deg"])
 
     # pprint.pprint(datetime_list)
     # pprint.pprint(weather_data["Temperature"])
@@ -82,19 +85,9 @@ def main():
         # print(local)
         weather_data["Time"].append(local)
 
-    # pprint.pprint(local_time_list)
-
-    # shows temperature that is equal to the time
-    # temperature_time_list = []
-    # for i in range(40):
-    #     temp = temperature_list[i]
-    #     time = local_time_list[i]
-    #     temperature_time_list.append(str(temp) + " = " + str(time))
-    # pprint.pprint(temperature_time_list)
-
     dataframe = pd.DataFrame(weather_data)
     dataframe.set_index("Time", inplace=True)
-    print(dataframe.head())
+    print(dataframe)
 
     # time/temp plot
     plt.subplot(2, 1, 1)
