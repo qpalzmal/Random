@@ -45,26 +45,23 @@ def main():
     # pprint.pprint(data["list"][0]["wind"]["speed"])
 
     # receives the temperature/date time/wind speed from the data
-    temperature_list = []
+    weather_data = {"Time": [],
+                    "Temperature": [],
+                    "Wind Speed": []}
     datetime_list = []
-    wind_speed_list = []
+
     for index in range(len(data["list"])):
-        # gets the temperature
-        temperature = data["list"][index]["main"]["temp"]
-        temperature_list.append(temperature)
         # gets the time
-        date_time = data["list"][index]["dt_txt"]
-        datetime_list.append(date_time)
+        datetime_list.append(data["list"][index]["dt_txt"])
+        # gets the temperature
+        weather_data["Temperature"].append(data["list"][index]["main"]["temp"])
         # gets the wind speed
-        wind_speed = data["list"][index]["wind"]["speed"]
-        wind_speed_list.append(wind_speed)
-        index += 1
+        weather_data["Wind Speed"].append(data["list"][index]["wind"]["speed"])
 
-    # pprint.pprint(temperature_list)
     # pprint.pprint(datetime_list)
-    # pprint.pprint(wind_speed_list)
+    # pprint.pprint(weather_data["Temperature"])
+    # pprint.pprint(weather_data["Wind Speed"])
 
-    local_time_list = []
     # Auto-detect zones
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
@@ -83,7 +80,7 @@ def main():
         # Convert time zone
         local = utc.astimezone(to_zone)
         # print(local)
-        local_time_list.append(local)
+        weather_data["Time"].append(local)
 
     # pprint.pprint(local_time_list)
 
@@ -95,26 +92,18 @@ def main():
     #     temperature_time_list.append(str(temp) + " = " + str(time))
     # pprint.pprint(temperature_time_list)
 
-    weather_data = {"Time": [],
-                    "Temperature": [],
-                    "Wind Speed": []}
-
-    for i in range(len(temperature_list)):
-        weather_data["Time"].append(local_time_list[i])
-        weather_data["Temperature"].append(temperature_list[i])
-        weather_data["Wind Speed"].append(wind_speed_list[i])
-
     dataframe = pd.DataFrame(weather_data)
-    print(dataframe)
+    dataframe.set_index("Time", inplace=True)
+    print(dataframe.head())
 
     # time/temp plot
     plt.subplot(2, 1, 1)
-    plt.plot(dataframe["Time"], dataframe["Temperature"], color="blue", linewidth=2.5, linestyle="-")
+    plt.plot(dataframe.index.values, dataframe["Temperature"], color="blue", linewidth=2.5, linestyle="-")
     plt.ylabel("Temperature({})".format(units_symbol))
 
     # time/wind speed plot
     plt.subplot(2, 1, 2)
-    plt.plot(dataframe["Time"], dataframe["Wind Speed"], color="green", linewidth=2.5, linestyle="-")
+    plt.plot(dataframe.index.values, dataframe["Wind Speed"], color="green", linewidth=2.5, linestyle="-")
     plt.xlabel("Date(Y-M-D)")
     plt.ylabel("Wind Speed(m/s)")
 
