@@ -116,9 +116,12 @@ def get_html(search, units, key):
         # print(url)
         return url
     else:
-        print("----- Invalid response -----")
-        search = input('What do you want to use to search for the weather ("zip", "city"): ')
-        return get_html(search, units, key)
+        print("----- Received Invalid Response -----")
+        print('----- Search has now defaulted to "city" -----')
+        city = input("Enter the city you want the weather for: ")
+        url = "http://api.openweathermap.org/data/2.5/forecast?q={}&units={}&appid={}".format(city, units, key)
+        # print(url)
+        return url
 
 
 # goes to the url and sends back the data for use
