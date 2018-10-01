@@ -7,7 +7,7 @@ import urllib.request
 # import pprint
 import json
 import pandas as pd
-# import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from dateutil import tz
@@ -47,7 +47,8 @@ def main():
     weather_data = {"Time": [],
                     "Temperature": [],
                     "Wind Speed": [],
-                    "Wind Direction": []}
+                    "Wind Direction": [],
+                    "Average Temperature": []}
     datetime_list = []
 
     for index in range(len(data["list"])):
@@ -60,9 +61,17 @@ def main():
         # gets the wind direction
         weather_data["Wind Direction"].append(data["list"][index]["wind"]["deg"])
 
+    total = 0
+    for number in weather_data["Temperature"]:
+        total += number
+    average = total / int(len(weather_data["Temperature"]))
+    for count in range(40):
+        weather_data["Average Temperature"].append(average)
+
     # pprint.pprint(datetime_list)
     # pprint.pprint(weather_data["Temperature"])
     # pprint.pprint(weather_data["Wind Speed"])
+    # pprint.pprint(weather_data["Average Temperature"]
 
     # Auto-detect zones
     from_zone = tz.tzutc()
@@ -86,11 +95,13 @@ def main():
 
     dataframe = pd.DataFrame(weather_data)
     dataframe.set_index("Time", inplace=True)
-    print(dataframe)
+    # print(dataframe)
 
     # time/temp plot
     plt.subplot(2, 1, 1)
     plt.plot(dataframe.index.values, dataframe["Temperature"], color="blue", linewidth=2.5, linestyle="-")
+    plt.plot(dataframe.index.values, dataframe["Average Temperature"], color="black", linewidth=2.5, linestyle="-")
+    plt.legend(None, ("Temperature", "Average Temperature"))
     plt.ylabel("Temperature({})".format(units_symbol))
 
     # time/wind speed plot
@@ -99,7 +110,8 @@ def main():
     plt.xlabel("Date(Y-M-D)")
     plt.ylabel("Wind Speed(m/s)")
 
-    plt.show()
+    while True:
+        plt.show()
 
 
 # receives a search type and returns the respective url
