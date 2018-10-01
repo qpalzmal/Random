@@ -4,10 +4,10 @@ This program scraps the web for data and uses it to graph the data for analysis 
 
 
 import urllib.request
-import pprint
+# import pprint
 import json
 import pandas as pd
-import numpy as np
+# import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from dateutil import tz
@@ -33,8 +33,7 @@ def main():
         units = "imperial"
         units_symbol = "°F"
 
-    search = input('What do you want to use to search for weather ("zip", "city"): ')
-    url = get_html(search, units, API_KEY)
+    url = get_html(units, API_KEY)
 
     data = get_data(url)
     # pprint.pprint(data)
@@ -104,7 +103,8 @@ def main():
 
 
 # receives a search type and returns the respective url
-def get_html(search, units, key):
+def get_html(units, key):
+    search = input('What do you want to use to search for weather ("zip", "city"): ')
     if search.lower() == "city":
         city = input("Enter the city you want the weather for: ")
         url = "http://api.openweathermap.org/data/2.5/forecast?q={}&units={}&appid={}".format(city, units, key)
