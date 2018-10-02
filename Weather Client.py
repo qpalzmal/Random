@@ -101,7 +101,7 @@ def main():
     plt.subplot(2, 1, 1)
     plt.plot(dataframe.index.values, dataframe["Temperature"], color="blue", linewidth=2.5, linestyle="-")
     plt.plot(dataframe.index.values, dataframe["Average Temperature"], color="black", linewidth=2.5, linestyle="-")
-    plt.legend(None, ("Temperature", "Average Temperature"))
+    plt.legend(["Temperature", "Average Temperature"])
     plt.ylabel("Temperature({})".format(units_symbol))
 
     # time/wind speed plot
