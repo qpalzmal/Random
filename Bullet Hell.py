@@ -142,7 +142,7 @@ while running:
             running = False
 
     all_sprites.update()
-    
+
     screen.fill(WHITE)
     all_sprites.draw(screen)
     hit_box = pygame.draw.circle(screen, RED, (player.rect.centerx, player.rect.centery), 5)
