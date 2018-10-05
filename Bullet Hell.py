@@ -15,37 +15,40 @@ forsen = pygame.image.load("forsenE.png")
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bullet Hell")
+pygame.display.set_caption("Snus Hell")
 clock = pygame.time.Clock()
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = forsen
+        self.image = pygame.transform.scale(forsen, (25, 25))
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH / 2
-        self.rect.centery = HEIGHT - 20
+        self.rect.centerx = x
+        self.rect.centery = y
         self.speed_x = 0
         self.speed_y = 0
+        self.shoot_delay = pygame.time.get_ticks()
 
     def update(self):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
         self.speed_x = 0
         self.speed_y = 0
+
+        # all keys the player can use to do stuff
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LEFT]:
-            self.speed_x = -2
-        if keystate[pygame.K_RIGHT]:
-            self.speed_x = 2
-        if keystate[pygame.K_UP]:
-            self.speed_y = -2
-        if keystate[pygame.K_DOWN]:
-            self.speed_y = 2
         if keystate[pygame.K_SPACE]:
             self.shoot()
+        if keystate[pygame.K_LEFT] or keystate[pygame.K_a]:
+            self.speed_x = -4
+        if keystate[pygame.K_RIGHT] or keystate[pygame.K_d]:
+            self.speed_x = 4
+        if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+            self.speed_y = -0
+        if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+            self.speed_y = 0
 
         # bounds player inside on x-axis
         if self.rect.left < 0:
@@ -60,27 +63,48 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-        all_sprites.bullets.add(bullet)
+        now = pygame.time.get_ticks()
+        if now - self.shoot_delay > 175:
+            bullet = Bullet(self.rect.centerx, self.rect.top, "up")
+            all_sprites.add(bullet)
+            bullets.add(bullet)
+            self.shoot_delay = now
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
         self.image = forsen
+        self.image = pygame.transform.scale(self.image, (10, 10))
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
+        if direction == "up":
+            self.speed_y = -6
+        else:
+            self.speed_y = 6
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.bottom < 0:
+            self.kill()
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
 
 
 # build player and add it to the draw group
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
-player = Player()
+player = Player(WIDTH / 2, HEIGHT - 20)
+enemy = Player(WIDTH / 2, 0 + 20)
+
 all_sprites.add(player)
-all_sprites.add(bullets)
+all_sprites.add(enemy)
 
 
 running = True
@@ -90,10 +114,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    all_sprites.update()
+
+    screen.fill(WHITE)
     all_sprites.draw(screen)
     hit_box = pygame.draw.circle(screen, RED, (player.rect.centerx, player.rect.centery), 5)
-    all_sprites.update()
     pygame.display.flip()
-    screen.fill(WHITE)
 
 pygame.quit()
