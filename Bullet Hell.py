@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.speed_x = 0
         self.speed_y = 0
         self.shoot_delay = pygame.time.get_ticks()
+        self.health = 100
 
     def update(self):
         self.rect.x += self.speed_x
@@ -79,6 +80,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
+        # direction the bullet moves based on who shot it
         if direction.lower() == "up":
             self.speed_y = -6
         else:
@@ -99,6 +101,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.centery = 20
         self.shoot_delay = pygame.time.get_ticks()
+        self.health = 1000
 
     def update(self):
         self.shoot()
@@ -139,7 +142,7 @@ while running:
             running = False
 
     all_sprites.update()
-
+    
     screen.fill(WHITE)
     all_sprites.draw(screen)
     hit_box = pygame.draw.circle(screen, RED, (player.rect.centerx, player.rect.centery), 5)
