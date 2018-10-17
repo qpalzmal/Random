@@ -1,9 +1,7 @@
 import sc2
-from sc2 import run_game, maps, Race
-from sc2.player import Bot, Human
+from sc2 import run_game, maps, Race, Difficulty
+from sc2.player import Bot, Human, Computer
 from sc2.constants import NEXUS, PROBE, PYLON, ASSIMILATOR
-
-map_dir = "C:\\Users\CODE\Desktop\Ladder2018Season2\\16-BitLE"
 
 
 class WorkerRushBot(sc2.BotAI):
@@ -30,21 +28,27 @@ class WorkerRushBot(sc2.BotAI):
                 await self.do(nexus.train(PROBE))
 
     async def build_supply(self):
-        if self.supply_left <= 6 and not self.already_pending(PYLON):
-            nexuses = self.units(NEXUS).ready
-            if nexuses.exist:
+        if self.supply_left <= 10 and not self.already_pending(PYLON):
+            nexus = self.units(NEXUS).ready
+            if nexus.exists:
                 if self.can_afford(PYLON):
-                    await self.build(PYLON, near=nexuses(first))
+                    await self.build(PYLON, near=nexus.first)
 
     async def build_assimilator(self):
         for nexus in self.units(NEXUS).ready:
-            self.vespene_geysers = self.state.vespene_geyser.closer_than(25.0, nexus)
+            self.vespene_geysers = self.state.vespene_geyser.closer_than(10.0, nexus)
             for vespene_geyser in self.vespene_geysers:
-                if self.can_afford(ASSIMILATOR):
-                    self.units.closer_than(1.0, vespene_geyser).exits:
-                        await self.build(ASSIMILATOR)
+                if not self.can_afford(ASSIMILATOR) or self.supply_left <= 5:
+                    break
+                if not self.units(ASSIMILATOR).closer_than(1.0, vespene_geyser).exists:
+                    worker = self.select_build_worker(vespene_geyser.position)
+                    if worker is None:
+                        break
+                    await self.do(worker.build(ASSIMILATOR, vespene_geyser))
 
-run_game(maps.get(map_dir), [
-    Human(Race.Protoss),
-    Bot(Race.PROTOSS, WorkerRushBot())
+
+run_game(maps.get("(2)16-BitLE"), [
+    # Human(Race.Protoss),
+    Bot(Race.Protoss, WorkerRushBot()),
+    Computer(Race.Protoss, Difficulty.VeryEasy)
 ], realtime=True)
