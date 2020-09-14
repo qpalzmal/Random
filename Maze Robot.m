@@ -1,3 +1,5 @@
+% Robot that can navigate a maze autonomously and also be controlled to complete task of transporting an object to a different area.
+
 brick = ConnectBrick('GROUP7');
 
 running = true;
